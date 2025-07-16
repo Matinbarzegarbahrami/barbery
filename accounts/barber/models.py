@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 DAYS_OF_WEEK = [
     ('sat', 'Saturday'),
@@ -37,12 +37,20 @@ class BarberUserManager(BaseUserManager):
 
 
 class BarberUser(AbstractBaseUser):
-    firstname = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=150)
-    phone = models.CharField(max_length=11)
+    firstname = models.CharField(max_length=100,blank=True, null=True)
+    lastname = models.CharField(max_length=150,blank=True, null=True)
+    phone = models.CharField(max_length=11, unique=True)
     is_barber = models.BooleanField(default=False)
-    bio = models.TextField()
-    specialties = models.ManyToManyField(Specialty, related_name='barbers')
+    bio = models.TextField(blank=True, null=True)
+    specialties = models.ManyToManyField(Specialty, related_name='barbers',blank=True)
+    
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = []
+    
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    
+    objects = BarberUserManager()
 
 class WorkingTime(models.Model):
     barber = models.ForeignKey(BarberUser, related_name="workingtime", on_delete=models.CASCADE)
@@ -54,5 +62,5 @@ class WorkingTime(models.Model):
         unique_together = ('barber', 'days')
     
     def __str__(self):
-        return f"{self.barber}"
+        return f"{self.barber} : (days:{self.days}) from {self.starttime} - {self.endtime}"
     

@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts.barber.apps.BarberConfig',
-    
+    'accounts.client.apps.ClientConfig',
 ]
 
 MIDDLEWARE = [

@@ -39,20 +39,10 @@ class BarberUserManager(BaseUserManager):
 class BarberUser(AbstractBaseUser):
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=150)
-    phone = models.PositiveIntegerField(max_length=11)
+    phone = models.CharField(max_length=11)
     is_barber = models.BooleanField(default=False)
     bio = models.TextField()
     specialties = models.ManyToManyField(Specialty, related_name='barbers')
-
-
-initial_specialties = [
-    "Haircut", "Shaving with razor", "Eyebrow shaping", "Hair coloring",
-    "Highlights", "Keratin treatment", "Bleaching", "Braiding", "Hair Botox", "Updo", "Bridal makeup"
-]
-
-for name in initial_specialties:
-    Specialty.objects.get_or_create(name=name)
-
 
 class WorkingTime(models.Model):
     barber = models.ForeignKey(BarberUser, related_name="workingtime", on_delete=models.CASCADE)
@@ -61,7 +51,7 @@ class WorkingTime(models.Model):
     endtime = models.TimeField()
     
     class Meta:
-        unique_together = ('barber', 'day')
+        unique_together = ('barber', 'days')
     
     def __str__(self):
         return f"{self.barber}"
